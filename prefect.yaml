@@ -5,8 +5,12 @@ build: []
 push: []
 
 pull:
+  - prefect.deployments.steps.git_clone:
+      id: cloned-repo
+      repository: "{{ $PREFECT_SOURCE_REPOSITORY }}"
+      branch: "{{ $PREFECT_SOURCE_BRANCH }}"
   - prefect.deployments.steps.set_working_directory:
-      directory: "{{ $PREFECT_CONTAINER_PROJECT_PATH }}"
+      directory: "{{ cloned-repo.directory }}"
 
 definitions:
   docker_work_pool: &docker_work_pool
@@ -16,8 +20,6 @@ definitions:
       image: prefecthq/prefect:3-python3.12
       networks:
         - "{{ $PREFECT_DOCKER_NETWORK }}"
-      volumes:
-        - "{{ $PREFECT_HOST_PROJECT_PATH }}:{{ $PREFECT_CONTAINER_PROJECT_PATH }}:rw"
       env:
         PREFECT_API_URL: "{{ $PREFECT_CONTAINER_API_URL }}"
 

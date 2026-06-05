@@ -35,11 +35,11 @@ is not tied to one machine:
 
 - `PREFECT_WORK_POOL_NAME` for the Docker work pool name
 - `PREFECT_DOCKER_NETWORK` for the container network name
-- `PREFECT_HOST_PROJECT_PATH` for the host path mounted into the container
-- `PREFECT_CONTAINER_PROJECT_PATH` for the in-container mount target
 - `PREFECT_CONTAINER_API_URL` for the API URL the run container can reach
     from inside the container; prefer a stable hostname like
     `host.containers.internal` over a bridge IP
+- `PREFECT_SOURCE_REPOSITORY` for the Git repo Prefect should clone at runtime
+- `PREFECT_SOURCE_BRANCH` for the branch to run from (for example, `main`)
 
 `prefect.yaml` can reference environment variables with `{{ $VAR_NAME }}`, but
 Prefect does not automatically load a `.env` file for you. Use `.env.example`
@@ -51,9 +51,9 @@ Example values:
 ```powershell
 $env:PREFECT_WORK_POOL_NAME='docker-demo-pool'
 $env:PREFECT_DOCKER_NETWORK='podman'
-$env:PREFECT_HOST_PROJECT_PATH='/mnt/c/path/to/your/repo'
-$env:PREFECT_CONTAINER_PROJECT_PATH='/opt/prefect/project'
 $env:PREFECT_CONTAINER_API_URL='http://host.containers.internal:4200/api'
+$env:PREFECT_SOURCE_REPOSITORY='https://github.com/ralacher/prefect-demo.git'
+$env:PREFECT_SOURCE_BRANCH='main'
 ```
 
 If you keep the values in a local `.env` file, load them first in PowerShell:
