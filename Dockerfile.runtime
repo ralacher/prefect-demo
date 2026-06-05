@@ -5,11 +5,10 @@ WORKDIR /opt/prefect
 # Install a deduplicated set of script dependencies into the runtime image.
 COPY scripts/ /tmp/scripts/
 RUN set -eux; \
-    find /tmp/scripts -name requirements.txt -print0 \
-      | xargs -0 -r cat \
-      | grep -v '^\s*$' \
-      | grep -v '^\s*#' \
-      | sort -u > /tmp/requirements.all.txt; \
+    find /tmp/scripts -name requirements.txt | while read f; do cat "$f"; echo; done | \
+      grep -v '^\s*$' | \
+      grep -v '^\s*#' | \
+      sort -u > /tmp/requirements.all.txt; \
     if [ -s /tmp/requirements.all.txt ]; then \
       python -m pip install --no-cache-dir -r /tmp/requirements.all.txt; \
     fi; \
