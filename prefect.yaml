@@ -17,7 +17,7 @@ definitions:
     name: "{{ $PREFECT_WORK_POOL_NAME }}"
     work_queue_name: default
     job_variables:
-      image: prefecthq/prefect:3-python3.12
+      image: "{{ $PREFECT_RUNTIME_IMAGE }}"
       networks:
         - "{{ $PREFECT_DOCKER_NETWORK }}"
       env:
