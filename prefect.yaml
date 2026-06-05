@@ -1,0 +1,99 @@
+name: prefect-demo
+prefect-version: 3.7.3
+
+build: []
+push: []
+
+pull:
+  - prefect.deployments.steps.set_working_directory:
+      directory: "{{ $PREFECT_CONTAINER_PROJECT_PATH }}"
+
+definitions:
+  docker_work_pool: &docker_work_pool
+    name: "{{ $PREFECT_WORK_POOL_NAME }}"
+    work_queue_name: default
+    job_variables:
+      image: prefecthq/prefect:3-python3.12
+      networks:
+        - "{{ $PREFECT_DOCKER_NETWORK }}"
+      volumes:
+        - "{{ $PREFECT_HOST_PROJECT_PATH }}:{{ $PREFECT_CONTAINER_PROJECT_PATH }}:rw"
+      env:
+        PREFECT_API_URL: "{{ $PREFECT_CONTAINER_API_URL }}"
+
+deployments:
+  - name: 01-my-flow
+    version: 1.0.0
+    tags:
+      - demo
+      - uv
+      - docker
+    description: Demo flow 01 running with uv in a per-script virtual environment.
+    entrypoint: scripts/01-my-flow/main.py:my_flow
+    parameters: {}
+    schedules:
+      - interval: 900
+        timezone: America/New_York
+        active: true
+    work_pool: *docker_work_pool
+
+  - name: 02-prepare-data
+    version: 1.0.0
+    tags:
+      - demo
+      - uv
+      - docker
+    description: Demo flow 02 running with uv in a per-script virtual environment.
+    entrypoint: scripts/02-prepare-data/main.py:prepare_data
+    parameters: {}
+    schedules:
+      - interval: 1200
+        timezone: America/New_York
+        active: true
+    work_pool: *docker_work_pool
+
+  - name: 03-transform-data
+    version: 1.0.0
+    tags:
+      - demo
+      - uv
+      - docker
+    description: Demo flow 03 running with uv in a per-script virtual environment.
+    entrypoint: scripts/03-transform-data/main.py:transform_data
+    parameters: {}
+    schedules:
+      - interval: 1500
+        timezone: America/New_York
+        active: true
+    work_pool: *docker_work_pool
+
+  - name: 04-publish-summary
+    version: 1.0.0
+    tags:
+      - demo
+      - uv
+      - docker
+    description: Demo flow 04 running with uv in a per-script virtual environment.
+    entrypoint: scripts/04-publish-summary/main.py:publish_summary
+    parameters: {}
+    schedules:
+      - interval: 1800
+        timezone: America/New_York
+        active: true
+    work_pool: *docker_work_pool
+
+  - name: 05-fail-demo
+    version: 1.0.0
+    tags:
+      - demo
+      - uv
+      - docker
+      - expected-failure
+    description: Demo flow 05 intentionally fails to demonstrate error handling.
+    entrypoint: scripts/05-fail-demo/main.py:fail_demo
+    parameters: {}
+    schedules:
+      - interval: 1800
+        timezone: America/New_York
+        active: false
+    work_pool: *docker_work_pool
